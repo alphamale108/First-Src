@@ -1,7 +1,8 @@
-#Github.com-mxsport
+# Direct GitHub repositories
+git+https://github.com/vasusen-code/Telethon@v1.24.0
+git+https://github.com/vasusen-code/ethon@v0.1.4
 
-https://github.com/vasusen-code/Telethon/archive/refs/tags/v1.24.0.zip
-https://github.com/vasusen-code/ethon/archive/refs/tags/v0.1.4.zip
+# PyPI packages
 cryptg
 tgcrypto
 pyrogram
