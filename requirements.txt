@@ -1,11 +1,9 @@
-# Direct GitHub repositories
 git+https://github.com/vasusen-code/Telethon@v1.24.0
 git+https://github.com/vasusen-code/ethon@v0.1.4
-
-# PyPI packages
-cryptg
-tgcrypto
-pyrogram
-python-decouple
-Flask==2.3.3
+pyrogram==2.0.106
+tgcrypto==1.2.5
+cryptg==0.4.0
+python-decouple==3.8
+flask==2.3.3
 gunicorn==21.2.0
+requests==2.31.0
