@@ -1,57 +1,59 @@
-from flask import Flask, request
+from flask import Flask
 import threading
-import subprocess
 import os
 import logging
+import time
 
 app = Flask(__name__)
-
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Global variable to track bot process
-bot_process = None
+bot_started = False
 
 def start_bot():
-    """Start the bot in a separate process"""
-    global bot_process
+    """Start the Telegram bot"""
+    global bot_started
     try:
-        logger.info("Starting Telegram bot...")
-        bot_process = subprocess.Popen(["python", "bot.py"])
-        logger.info("Bot started successfully")
+        logger.info("Starting Telegram Restricted Content Bot...")
+        # Import and run your main bot file
+        from main import main
+        bot_thread = threading.Thread(target=main, daemon=True)
+        bot_thread.start()
+        logger.info("Bot started successfully in background thread")
+        bot_started = True
     except Exception as e:
         logger.error(f"Failed to start bot: {e}")
+        import traceback
+        traceback.print_exc()
 
 @app.route('/')
 def home():
-    return "🤖 Telegram Bot is Running!"
+    return """
+    <h1>🤖 Telegram Restricted Content Bot</h1>
+    <p>Bot is running successfully!</p>
+    <p><a href="/health">Check Health</a></p>
+    <p><strong>Features:</strong> Save restricted content, Force subscribe, User management</p>
+    """
 
 @app.route('/health')
 def health():
-    global bot_process
-    if bot_process and bot_process.poll() is None:
-        return "✅ Bot is healthy and running"
+    if bot_started:
+        return "✅ Bot is healthy and running", 200
     else:
         return "❌ Bot is not running", 500
 
-@app.route('/restart')
-def restart_bot():
-    global bot_process
-    try:
-        if bot_process:
-            bot_process.terminate()
-            bot_process.wait()
-        
-        start_bot()
-        return "🔄 Bot restarted successfully"
-    except Exception as e:
-        return f"❌ Failed to restart bot: {e}", 500
+@app.route('/status')
+def status():
+    return {
+        "status": "running" if bot_started else "starting",
+        "service": "Telegram Content Bot",
+        "version": "1.0",
+        "bot_started": bot_started
+    }
 
-# Start bot when app starts
-@app.before_first_request
-def startup():
-    start_bot()
+# Start bot immediately when app starts
+logger.info("Initializing Telegram Bot...")
+start_bot()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
